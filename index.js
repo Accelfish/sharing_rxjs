@@ -1,16 +1,46 @@
-const { fromEvent } = rxjs;
-// https://rxjs.dev/api/operators
-const { take, pipe, map, filter } = rxjs.operators;
+const { fromEvent, from } = rxjs;
+const { take } = rxjs.operators;
 
-var count = 0
-var click$ = fromEvent(document, 'click');
-var clickToCount$ = click$.pipe(map((e) => 2)
-                                // , take(10)
-                                // , filter((e) => e == 1)
-                                );
-var observer = { next: (e) => console.log(count+=1) };
-var observer2 = { next: (e) => console.log(count+=e) };
+var handler = (e) => {
+    console.log(e);
+    document.body.removeEventListener('click', handler); // 結束監聽
+}
 
-// clickToCount$.subscribe(observer);
-clickToCount$.subscribe(observer2);
+// 註冊監聽
+document.body.addEventListener('click', handler);
 
+fromEvent(document, 'click')
+    .pipe(take(1))
+    .subscribe(console.log);
+
+//=======
+
+// 從陣列轉換 Observable
+// var observerA = {
+//     next: value => console.log('A next: ' + value),
+//     error: error => console.log('A error: ' + error),
+//     complete: () => console.log('A complete!')
+// }
+//
+// var arr = ['kriz', 'sillyfish'];
+// from(arr).subscribe(observerA);
+
+
+// Promise to Observerable
+// var helloWorldPromise = (switchExcept) => new Promise((resolve, reject) => {
+//         setTimeout(() => {
+//             if(switchExcept){
+//                 reject('this is exception');
+//             }
+//             resolve('Hello World!');
+//         },3000)
+//     })
+//
+// var observerable1$ = from(helloWorldPromise());
+//
+// var observerPromise = {
+//     next: value => console.log('next: ' + value),
+//     error: error => console.log('error: ' + error),
+//     complete: () => console.log('complete!')
+// }
+// observerable1$.subscribe(observerPromise);
